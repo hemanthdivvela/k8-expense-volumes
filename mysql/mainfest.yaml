@@ -4,7 +4,7 @@ metadata:
   name: mysql-headless
   namespace: expense
 spec:
-  clusterIp: None # this is called headless service
+  clusterIP: None # this is called headless service
   selector:
     component: mysql
     project: expense
@@ -73,15 +73,15 @@ spec:
         - name: mysql
           mountPath: /var/lib/mysql
   # PVC declaration, it is mandatory
-volumeClaimTemplates:
-- metadata:
-    name: mysql
-  spec:
-    accessModes: [ "ReadWriteOnce" ]
-    storageClassName: "expense-ebs"
-    resources:
-      requests:
-        storage: 1G
+  volumeClaimTemplates:
+  - metadata:
+      name: mysql
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      storageClassName: "expense-ebs"
+      resources:
+        requests:
+          storage: 1G
   
 
 
