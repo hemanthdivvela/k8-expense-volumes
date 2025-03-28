@@ -1,4 +1,37 @@
 apiVersion: v1
+kind: Service
+metadata:
+  name: mysql-headless
+  namespace: expense
+spec:
+  clusterIp: None # this is called headless service
+  selector:
+    component: mysql
+    project: expense
+    tier: db
+  ports:
+  - protocol: TCP
+    port: 3306 #service -port
+    targetPort: 3306 # target-ports
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql
+  namespace: expense
+spec:
+  selector:
+    component: mysql
+    project: expense
+    tier: db
+  ports:
+  - protocol: TCP
+    port: 3306 #service -port
+    targetPort: 3306 # target-ports
+
+---
+apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: mysql
@@ -23,8 +56,8 @@ spec:
       project: expense
       tier: db  
       # has to match .spec.template.metadata.labels
-  serviceName: "nginx"
-  replicas: 3 # by default is 1
+  serviceName: "mysql-headless" # provide headless service name
+  replicas: 2 # by default is 1
   template:
     metadata:
       labels:
@@ -35,33 +68,21 @@ spec:
       containers:
       - name: mysql
         image:  hemanth765/mysql:v1.0
-        ports:
-        - containerPort: 80
-          name: web
+        imagePullPolicy: Always
         volumeMounts:
         - name: mysql
           mountPath: /var/lib/mysql
-      volumes:
-      - name: mysql
-        persistentVolumeClaim:
-          claimName: mysql
+  # PVC declaration, it is mandatory
+volumeClaimTemplates:
+- metadata:
+    name: mysql
+  spec:
+    accessModes: [ "ReadWriteOnce" ]
+    storageClassName: "expense-ebs"
+    resources:
+      requests:
+        storage: 1G
   
 
 
 
-# ---
-# apiVersion: v1
-# kind: Service
-# metadata:
-#   name: nginx
-#   namespace: expense
-# spec:
-#   clusterIp: None # this is called headless
-#   selector:
-#     component: mysql
-#     project: expense
-#     tier: db
-#   ports:
-#   - protocol: TCP
-#     port: 3306 #service -port
-#     targetPort: 3306 # target-ports
