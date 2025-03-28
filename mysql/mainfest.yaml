@@ -10,40 +10,40 @@ spec:
   resources:
     requests:
       storage: 4Gi
-# ---
-# apiVersion: apps/v1
-# kind: StatefulSet
-# metadata:
-#   name: mysql
-#   namespace: expense
-# spec:
-#   serviceName: "nginx"
-#   replicas: 3
-#   selector:
-#     matchLabels:
-#       component: mysql
-#       project: expense
-#       tier: db
-#   template:
-#     metadata:
-#       labels:
-#         component: mysql
-#         project: expense
-#         tier: db
-#     spec:
-#       containers:
-#       - name: nginx
-#         image: hemanth765/mysql:v1.0
-#         ports:
-#         - containerPort: 80
-#           name: web
-#         volumeMounts:
-#         - name: mysql
-#           mountPath: /var/lib/mysql
-#       volumes:
-#       - name: mysql
-#         persistentVolumeClaim:
-#           claimName: ebs-dynamic
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mysql
+  namespace: expense
+spec:
+  serviceName: "nginx"
+  replicas: 3
+  selector:
+    matchLabels:
+      component: mysql
+      project: expense
+      tier: db
+  template:
+    metadata:
+      labels:
+        component: mysql
+        project: expense
+        tier: db
+    spec:
+      containers:
+      - name: nginx
+        image: hemanth765/mysql:v1.0
+        ports:
+        - containerPort: 80
+          name: web
+        volumeMounts:
+        - name: mysql
+          mountPath: /var/lib/mysql
+      volumes:
+      - name: mysql
+        persistentVolumeClaim:
+          claimName: ebs-dynamic
 
 
 
