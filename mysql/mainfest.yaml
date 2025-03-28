@@ -28,9 +28,9 @@ spec:
   template:
     metadata:
       labels:
-      component: mysql
-      project: expense
-      tier: db # has to match .spec.selector.matchLabels
+        component: mysql
+        project: expense
+        tier: db # has to match .spec.selector.matchLabels
     spec:
       containers:
       - name: mysql
