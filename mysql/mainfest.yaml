@@ -1,3 +1,4 @@
+---
 apiVersion: v1
 kind: Service
 metadata:
@@ -8,11 +9,11 @@ spec:
   selector:
     component: mysql
     project: expense
-    tier: db
+    tier: db 
   ports:
   - protocol: TCP
-    port: 3306 #service -port
-    targetPort: 3306 # target-ports
+    port: 3306 #service-port
+    targetPort: 3306 #target-port
 
 ---
 apiVersion: v1
@@ -24,25 +25,11 @@ spec:
   selector:
     component: mysql
     project: expense
-    tier: db
+    tier: db 
   ports:
   - protocol: TCP
-    port: 3306 #service -port
-    targetPort: 3306 # target-ports
-
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: mysql
-  namespace: expense
-spec:
-  storageClassName: "expense-ebs" # Empty string must be explicitly set otherwise default StorageClass will be set
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 4Gi
+    port: 3306 #service-port
+    targetPort: 3306 #target-port
 ---
 apiVersion: apps/v1
 kind: StatefulSet
@@ -52,18 +39,19 @@ metadata:
 spec:
   selector:
     matchLabels:
+      # has to match .spec.template.metadata.labels
       component: mysql
       project: expense
-      tier: db  
-      # has to match .spec.template.metadata.labels
+      tier: db 
   serviceName: "mysql-headless" # provide headless service name
   replicas: 2 # by default is 1
   template:
     metadata:
       labels:
+       # has to match .spec.selector.matchLabels
         component: mysql
         project: expense
-        tier: db # has to match .spec.selector.matchLabels
+        tier: db 
     spec:
       containers:
       - name: mysql
@@ -82,7 +70,9 @@ spec:
       resources:
         requests:
           storage: 1G
+
   
+
 
 
 
