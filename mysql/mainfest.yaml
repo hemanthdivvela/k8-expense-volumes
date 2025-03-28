@@ -17,23 +17,25 @@ metadata:
   name: mysql
   namespace: expense
 spec:
-  serviceName: "nginx"
-  replicas: 3
   selector:
     matchLabels:
       component: mysql
       project: expense
-      tier: db
+      tier: db  
+      # has to match .spec.template.metadata.labels
+  serviceName: "nginx"
+  replicas: 3 # by default is 1
   template:
     metadata:
       labels:
-        component: mysql
-        project: expense
-        tier: db
+      component: mysql
+      project: expense
+      tier: db 
+         # has to match .spec.selector.matchLabels
     spec:
       containers:
-      - name: nginx
-        image: hemanth765/mysql:v1.0
+      - name: mysql
+        image:  hemanth765/mysql:v1.0
         ports:
         - containerPort: 80
           name: web
@@ -43,7 +45,8 @@ spec:
       volumes:
       - name: mysql
         persistentVolumeClaim:
-          claimName: ebs-dynamic
+          claimName: mysql
+  
 
 
 
