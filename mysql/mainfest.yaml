@@ -30,8 +30,7 @@ spec:
       labels:
       component: mysql
       project: expense
-      tier: db 
-         # has to match .spec.selector.matchLabels
+      tier: db # has to match .spec.selector.matchLabels
     spec:
       containers:
       - name: mysql
