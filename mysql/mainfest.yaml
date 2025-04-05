@@ -1,42 +1,36 @@
-#headless service, normal service and statefulset
+
+---
 apiVersion: v1
 kind: Service
 metadata:
   name: mysql-headless
   namespace: expense
-  labels:
-    app: mysql
-    project: expense
-    tier: db
 spec:
-  clusterIP: None
+  clusterIP: None # this is called headless service
   selector:
-    app: mysql
-    project: expenset
-    tier: db
+    component: mysql
+    project: expense
+    tier: db 
   ports:
   - protocol: TCP
-    port: 3306
-    targetPort: 3306
+    port: 3306 #service-port
+    targetPort: 3306 #target-port
+
 ---
 apiVersion: v1
 kind: Service
-metadata: 
+metadata:
   name: mysql
   namespace: expense
-  labels:
-    app: mysql
-    project: expense
-    tier: db
 spec:
   selector:
-    app: mysql
+    component: mysql
     project: expense
-    tier: db
+    tier: db 
   ports:
   - protocol: TCP
-    port: 3306
-    targetPort: 3306
+    port: 3306 #service-port
+    targetPort: 3306 #target-port
 ---
 apiVersion: apps/v1
 kind: StatefulSet
@@ -46,34 +40,34 @@ metadata:
 spec:
   selector:
     matchLabels:
-      app: mysql
+      # has to match .spec.template.metadata.labels
+      component: mysql
       project: expense
-      tier: db
-  serviceName: "mysql-headless"
+      tier: db 
+  serviceName: "mysql-headless" # provide headless service name
   replicas: 2 # by default is 1
-  minReadySeconds: 10 # by default is 0
   template:
     metadata:
       labels:
-        app: mysql
+       # has to match .spec.selector.matchLabels
+        component: mysql
         project: expense
-        tier: db
+        tier: db 
     spec:
-      terminationGracePeriodSeconds: 10
       containers:
-      - name: nginx
+      - name: mysql
         image: hemanth765/mysql:v1.0
+        imagePullPolicy: Always
         volumeMounts:
         - name: mysql
           mountPath: /var/lib/mysql
-  #Instedd of creating a pvc resource, you can directly provide in statefulset
+  # PVC declaration, it is mandatory
   volumeClaimTemplates:
   - metadata:
       name: mysql
-      namespace: expense
     spec:
       accessModes: [ "ReadWriteOnce" ]
-      storageClassName: "ebs-sc"
+      storageClassName: "expense-ebs"
       resources:
         requests:
-          storage: 1Gi
+          storage: 1G
