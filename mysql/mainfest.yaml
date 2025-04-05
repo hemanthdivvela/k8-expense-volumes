@@ -56,7 +56,7 @@ spec:
     spec:
       containers:
       - name: mysql
-        image: joindevops/mysql:v1.0
+        image: hemanth/mysql:v1.0
         imagePullPolicy: Always
         #command: ["sh", "-c", "chown -R 999:999 /var/lib/mysql && chmod -R 775 /var/lib/mysql"]
         volumeMounts:
